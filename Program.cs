@@ -9,8 +9,6 @@ namespace Quick_NCA_Finder
     class Program
     {
         public static ulong TID;
-        public static FileInfo controlNCA;
-        public static FileInfo metaNCA;
 
         static void Main(string[] args)
         {
@@ -58,6 +56,7 @@ namespace Quick_NCA_Finder
 
                     foreach (Nca nca in title.Ncas)
                     {
+                        titleRoot.Create();
                         FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType.ToString()}.nca");
                         using (Stream source = nca.GetStream())
                         using (FileStream dest = ncainfo.Create())
