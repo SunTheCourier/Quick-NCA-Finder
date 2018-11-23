@@ -29,6 +29,7 @@ namespace Quick_NCA_Finder
             catch
             {
                 Console.WriteLine("The inputted TID is not valid");
+                return;
             }
 
             DirectoryInfo userpath = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
@@ -50,7 +51,6 @@ namespace Quick_NCA_Finder
            {
                 ulong titleId = kv.Key;
                 Title title = kv.Value;
-                FileInfo ncainfo;
 
                 if (kv.Key == TID)
                 {
@@ -61,7 +61,7 @@ namespace Quick_NCA_Finder
 
                     foreach (Nca nca in title.Ncas)
                     {
-                        ncainfo = titleRoot.GetFile($"{nca.Header.ContentType.ToString()}.nca");
+                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType.ToString()}.nca");
                         using (Stream source = nca.GetStream())
                         using (FileStream dest = ncainfo.Create())
                         {
