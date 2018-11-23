@@ -58,9 +58,9 @@ namespace Quick_NCA_Finder
 
                     foreach (Nca nca in title.Ncas)
                     {
-                        Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType.ToString()}");
+                        Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType}");
                         titleRoot.Create();
-                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType.ToString()}.nca");
+                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}.nca");
                         using (Stream source = nca.GetStream())
                         using (FileStream dest = ncainfo.Create())
                         {
@@ -71,6 +71,7 @@ namespace Quick_NCA_Finder
                 Console.WriteLine("Done!");
                 return;
             }
+
             try
             {
                 TID = ulong.Parse(args[1], NumberStyles.HexNumber);
@@ -90,12 +91,13 @@ namespace Quick_NCA_Finder
                 {
                     Console.WriteLine("Found!");
                     DirectoryInfo titleRoot = new DirectoryInfo($"./NCA/{titleId:X8}");
+                    
 
                     foreach (Nca nca in title.Ncas)
                     {
-                        Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType.ToString()} to working directory...");
+                        Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType} to working directory...");
                         titleRoot.Create();
-                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType.ToString()}.nca");
+                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}.nca");
                         using (Stream source = nca.GetStream())
                         using (FileStream dest = ncainfo.Create())
                         {
