@@ -58,7 +58,7 @@ namespace Quick_NCA_Finder
 
                     foreach (Nca nca in title.Ncas)
                     {
-                        Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType}");
+                        Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType} to working directory...");
                         titleRoot.Create();
                         FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}.nca");
                         using (Stream source = nca.GetStream())
