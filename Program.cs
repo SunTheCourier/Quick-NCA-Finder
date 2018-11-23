@@ -48,6 +48,7 @@ namespace Quick_NCA_Finder
                 return;
             }
 
+            int i = 0;
             if (args[1] == "*")
             {
                 foreach (KeyValuePair<ulong, Title> kv in fs.Titles)
@@ -61,6 +62,12 @@ namespace Quick_NCA_Finder
                         Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType} to working directory...");
                         titleRoot.Create();
                         FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}.nca");
+                        if (ncainfo.Exists)
+                        {
+                            i++;
+                            ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}{i}.nca");
+                        }
+                        else i = 0;
                         using (Stream source = nca.GetStream())
                         using (FileStream dest = ncainfo.Create())
                         {
@@ -98,6 +105,12 @@ namespace Quick_NCA_Finder
                         Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType} to working directory...");
                         titleRoot.Create();
                         FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}.nca");
+                        if (ncainfo.Exists)
+                        {
+                            i++;
+                            ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}{i}.nca");
+                        }
+                        else i = 0;
                         using (Stream source = nca.GetStream())
                         using (FileStream dest = ncainfo.Create())
                         {
