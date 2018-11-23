@@ -61,11 +61,11 @@ namespace Quick_NCA_Finder
                     {
                         Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType} to working directory...");
                         titleRoot.Create();
-                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}.nca");
+                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}00.nca");
                         if (ncainfo.Exists)
                         {
                             i++;
-                            ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}{i}.nca");
+                            ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}0{i}.nca");
                         }
                         else i = 0;
                         using (Stream source = nca.GetStream())
@@ -104,11 +104,11 @@ namespace Quick_NCA_Finder
                     {
                         Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType} to working directory...");
                         titleRoot.Create();
-                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}.nca");
+                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}00.nca");
                         if (ncainfo.Exists)
                         {
                             i++;
-                            ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}{i}.nca");
+                            ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}0{i}.nca");
                         }
                         else i = 0;
                         using (Stream source = nca.GetStream())
