@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.106
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick NCA Finder", "Quick NCA Finder.csproj", "{257F5208-28B8-4DF4-BF7D-AF76CA42CB7D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick-NCA-Finder", "Quick-NCA-Finder.csproj", "{257F5208-28B8-4DF4-BF7D-AF76CA42CB7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

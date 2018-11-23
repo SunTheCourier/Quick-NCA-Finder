@@ -7,7 +7,7 @@
     <ProjectGuid>{257F5208-28B8-4DF4-BF7D-AF76CA42CB7D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Quick_NCA_Finder</RootNamespace>
-    <AssemblyName>Quick NCA Finder</AssemblyName>
+    <AssemblyName>Quick-NCA-Finder</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
