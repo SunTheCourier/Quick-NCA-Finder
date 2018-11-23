@@ -77,6 +77,5 @@ namespace Quick_NCA_Finder
            }
             Console.WriteLine("TID not found!");
         }
-
     }
 }
