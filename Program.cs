@@ -12,9 +12,9 @@ namespace Quick_NCA_Finder
 
         static void Main(string[] args)
         {
-            if (args.Length != 2)
+            if (args.Length == 0)
             {
-                Console.WriteLine("Usage: Quick-NCA-Finder.exe {folder to search, make this is the root of the NAND partition or SD} {TID to search for (use * for all all)}");
+                Console.WriteLine("Usage: Quick-NCA-Finder.exe {folder to search, make this is the root of the NAND partition or SD} {TID to search for, use * for all all, or leave blank to list all TIDs}");
                 return;
             }
 
@@ -32,6 +32,22 @@ namespace Quick_NCA_Finder
             keys = ExternalKeys.ReadKeyFile(prodkeys.FullName, titlekeys.FullName);
             SwitchFs fs = new SwitchFs(keys, new FileSystem(dir.FullName));
 
+            if (args.Length == 1)
+            {
+                foreach (KeyValuePair<ulong, Title> kv in fs.Titles)
+                {
+                    ulong titleId = kv.Key;
+                    Title title = kv.Value;
+
+                    foreach (Nca nca in title.Ncas)
+                    {
+                        Console.WriteLine($"{nca.Header.TitleId:X8}: {nca.Header.ContentType.ToString()}");
+                    }
+                }
+
+                return;
+            }
+
             if (args[1] == "*")
             {
                 foreach (KeyValuePair<ulong, Title> kv in fs.Titles)
@@ -42,7 +58,7 @@ namespace Quick_NCA_Finder
 
                     foreach (Nca nca in title.Ncas)
                     {
-                        Console.WriteLine($"Saving {titleId:X8}");
+                        Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType.ToString()}");
                         titleRoot.Create();
                         FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType.ToString()}.nca");
                         using (Stream source = nca.GetStream())
@@ -52,6 +68,7 @@ namespace Quick_NCA_Finder
                         }
                     }
                 }
+                Console.WriteLine("Done!");
                 return;
             }
             try
@@ -72,12 +89,11 @@ namespace Quick_NCA_Finder
                 if (kv.Key == TID)
                 {
                     Console.WriteLine("Found!");
-                    Console.WriteLine($"-->{titleId:X8}<--");
-                    Console.WriteLine("Saving NCA to working directory...");
                     DirectoryInfo titleRoot = new DirectoryInfo($"./NCA/{titleId:X8}");
 
                     foreach (Nca nca in title.Ncas)
                     {
+                        Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType.ToString()} to working directory...");
                         titleRoot.Create();
                         FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType.ToString()}.nca");
                         using (Stream source = nca.GetStream())
