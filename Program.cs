@@ -90,7 +90,7 @@ namespace Quick_NCA_Finder
                 if (kv.Key == TID)
                 {
                     Console.WriteLine("Found!");
-                    DirectoryInfo titleRoot = new DirectoryInfo($"./NCA/{titleId:X8}");
+                    DirectoryInfo titleRoot = new DirectoryInfo($"./NCAs/{titleId:X8}");
                     
 
                     foreach (Nca nca in title.Ncas)
