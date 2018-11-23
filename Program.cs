@@ -44,8 +44,7 @@ namespace Quick_NCA_Finder
 
             Keyset keys = new Keyset();
             keys = ExternalKeys.ReadKeyFile(prodkeys.FullName, titlekeys.FullName);
-            FileSystem filesystem = new FileSystem(dir.FullName);
-            SwitchFs fs = new SwitchFs(keys, filesystem);
+            SwitchFs fs = new SwitchFs(keys, new FileSystem(dir.FullName));
 
            foreach (KeyValuePair<ulong, Title> kv in fs.Titles)
            {
