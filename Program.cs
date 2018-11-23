@@ -44,7 +44,7 @@ namespace Quick_NCA_Finder
                         Console.WriteLine($"{nca.Header.TitleId:X8}: {nca.Header.ContentType.ToString()}");
                     }
                 }
-
+                Console.WriteLine("Done!");
                 return;
             }
 
