@@ -16,15 +16,14 @@ namespace Quick_NCA_Finder
         {
             if (args.Length != 2)
             {
-                Console.WriteLine("Usage: Quick-NCA-Finder.exe {folder to search, make this is the root of the NAND partition} {TID to search for}");
+                Console.WriteLine("Usage: Quick-NCA-Finder.exe {folder to search, make this is the root of the NAND partition or SD} {TID to search for}");
                 return;
             }
 
             DirectoryInfo dir = new DirectoryInfo(args[0]);
-            string ID = args[1];
             try
             { 
-                TID = ulong.Parse(ID, NumberStyles.HexNumber);
+                TID = ulong.Parse(args[1], NumberStyles.HexNumber);
             }
             catch
             {
