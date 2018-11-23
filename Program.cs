@@ -31,9 +31,8 @@ namespace Quick_NCA_Finder
                 return;
             }
 
-            DirectoryInfo userpath = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
-            FileInfo prodkeys = new FileInfo(Path.Combine(userpath.FullName, ".switch/prod.keys"));
-            FileInfo titlekeys = new FileInfo(Path.Combine(userpath.FullName, ".switch/title.keys"));
+            FileInfo prodkeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch/prod.keys"));
+            FileInfo titlekeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch/title.keys"));
 
             if (!prodkeys.Exists && !titlekeys.Exists)
             {
@@ -56,6 +55,7 @@ namespace Quick_NCA_Finder
                     Console.WriteLine($"-->{titleId:X8}<--");
                     Console.WriteLine("Saving NCA to working directory...");
                     DirectoryInfo titleRoot = new DirectoryInfo($"./{titleId:X8}");
+                    Console.WriteLine("Done!");
 
                     foreach (Nca nca in title.Ncas)
                     {
