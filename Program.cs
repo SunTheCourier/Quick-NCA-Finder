@@ -55,7 +55,6 @@ namespace Quick_NCA_Finder
                     Console.WriteLine($"-->{titleId:X8}<--");
                     Console.WriteLine("Saving NCA to working directory...");
                     DirectoryInfo titleRoot = new DirectoryInfo($"./{titleId:X8}");
-                    Console.WriteLine("Done!");
 
                     foreach (Nca nca in title.Ncas)
                     {
