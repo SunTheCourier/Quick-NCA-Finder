@@ -21,15 +21,16 @@ namespace Quick_NCA_Finder
             DirectoryInfo dir = new DirectoryInfo(args[0]);
             FileInfo prodkeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch/prod.keys"));
             FileInfo titlekeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch/title.keys"));
+            FileInfo consolekeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch/console.keys"));
 
-            if (!prodkeys.Exists && !titlekeys.Exists)
+            if (!prodkeys.Exists || !titlekeys.Exists || !consolekeys.Exists)
             {
-                Console.WriteLine("Your prod.keys or title.keys do not exist at ~/.switch/ derive them in HACGUI or place them there.");
+                Console.WriteLine("Your prod.keys, title.keys or console.keys do not exist at ~/.switch/ derive them with HACGUI or place them there.");
                 return;
             }
 
             Keyset keys = new Keyset();
-            keys = ExternalKeys.ReadKeyFile(prodkeys.FullName, titlekeys.FullName);
+            keys = ExternalKeys.ReadKeyFile(prodkeys.FullName, titlekeys.FullName, consolekeys.FullName);
             SwitchFs fs = new SwitchFs(keys, new FileSystem(dir.FullName));
 
             if (args.Length == 1)
@@ -38,11 +39,7 @@ namespace Quick_NCA_Finder
                 {
                     ulong titleId = kv.Key;
                     Title title = kv.Value;
-
-                    foreach (Nca nca in title.Ncas)
-                    {
-                        Console.WriteLine($"{nca.Header.TitleId:X8}: {nca.Header.ContentType.ToString()}");
-                    }
+                    Console.WriteLine($"{titleId:X8} {title.Name}");
                 }
                 Console.WriteLine("Done!");
                 return;
@@ -55,11 +52,11 @@ namespace Quick_NCA_Finder
                 {
                     ulong titleId = kv.Key;
                     Title title = kv.Value;
-                    DirectoryInfo titleRoot = new DirectoryInfo($"./NCAs/{titleId:X8}");
+                    DirectoryInfo titleRoot = new DirectoryInfo($"./NCAs/{titleId:X8} {title.Name}");
 
                     foreach (Nca nca in title.Ncas)
                     {
-                        Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType} to working directory...");
+                        Console.WriteLine($"Saving {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to working directory...");
                         titleRoot.Create();
                         FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}00.nca");
                         if (ncainfo.Exists)
@@ -97,8 +94,8 @@ namespace Quick_NCA_Finder
                 if (kv.Key == TID)
                 {
                     Console.WriteLine("Found!");
-                    DirectoryInfo titleRoot = new DirectoryInfo($"./NCAs/{titleId:X8}");
-                    
+                    DirectoryInfo titleRoot = new DirectoryInfo($"./NCAs/{titleId:X8} {title.Name}");
+
 
                     foreach (Nca nca in title.Ncas)
                     {
