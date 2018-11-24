@@ -14,7 +14,7 @@ namespace Quick_NCA_Finder
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: Quick-NCA-Finder.exe {folder to search, make this is the root of the NAND partition or SD} {TID to search for, use * for all all, or leave blank to list all TIDs}");
+                Console.WriteLine("Usage: Quick-NCA-Finder.exe {folder to search, make this the root of the NAND partition or SD} {TID to search for, use * for all titles, or leave blank to list all titles}");
                 return;
             }
 
@@ -99,7 +99,7 @@ namespace Quick_NCA_Finder
 
                     foreach (Nca nca in title.Ncas)
                     {
-                        Console.WriteLine($"Saving {nca.Header.TitleId:X8}: {nca.Header.ContentType} to working directory...");
+                        Console.WriteLine($"Saving {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to working directory...");
                         titleRoot.Create();
                         FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}00.nca");
                         if (ncainfo.Exists)
