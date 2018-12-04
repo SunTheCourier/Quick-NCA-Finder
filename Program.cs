@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using LibHac;
+using System.Linq;
 
 namespace Quick_NCA_Finder
 {
     class Program
     {
-        public static ulong TID;
-
         static void Main(string[] args)
         {
             if (args.Length == 0)
@@ -18,6 +17,8 @@ namespace Quick_NCA_Finder
                 return;
             }
 
+            ulong TID;
+            DirectoryInfo NCAfolder = new DirectoryInfo("./NCAs");
             DirectoryInfo dir = new DirectoryInfo(args[0]);
             FileInfo prodkeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch/prod.keys"));
             FileInfo titlekeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch/title.keys"));
@@ -52,17 +53,20 @@ namespace Quick_NCA_Finder
                 {
                     ulong titleId = kv.Key;
                     Title title = kv.Value;
-                    DirectoryInfo titleRoot = new DirectoryInfo($"./NCAs/{titleId:X8} {title.Name}");
+                    string titleRoot = $"{titleId:X8} {title.Name}";
+                    string safeDirectoryName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
+                    safeDirectoryName = safeDirectoryName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
+                    DirectoryInfo safeDirectory = new DirectoryInfo(Path.Combine(NCAfolder.FullName, safeDirectoryName));
+                    safeDirectory.Create();
 
                     foreach (Nca nca in title.Ncas)
                     {
                         Console.WriteLine($"Saving {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to working directory...");
-                        titleRoot.Create();
-                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}00.nca");
+                        FileInfo ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}00.nca");
                         if (ncainfo.Exists)
                         {
                             i++;
-                            ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}0{i}.nca");
+                            ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}0{i}.nca");
                         }
                         else i = 0;
                         using (Stream source = nca.GetStream())
@@ -94,18 +98,20 @@ namespace Quick_NCA_Finder
                 if (kv.Key == TID)
                 {
                     Console.WriteLine("Found!");
-                    DirectoryInfo titleRoot = new DirectoryInfo($"./NCAs/{titleId:X8} {title.Name}");
-
+                    string titleRoot = $"{titleId:X8} {title.Name}";
+                    string safeDirectoryName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
+                    safeDirectoryName = safeDirectoryName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
+                    DirectoryInfo safeDirectory = new DirectoryInfo(Path.Combine(NCAfolder.FullName, safeDirectoryName));
+                    safeDirectory.Create();
 
                     foreach (Nca nca in title.Ncas)
                     {
                         Console.WriteLine($"Saving {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to working directory...");
-                        titleRoot.Create();
-                        FileInfo ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}00.nca");
+                        FileInfo ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}00.nca");
                         if (ncainfo.Exists)
                         {
                             i++;
-                            ncainfo = titleRoot.GetFile($"{nca.Header.ContentType}0{i}.nca");
+                            ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}0{i}.nca");
                         }
                         else i = 0;
                         using (Stream source = nca.GetStream())
