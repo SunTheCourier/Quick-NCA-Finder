@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using LibHac;
 using System.Linq;
+using LibHac.IO;
 
 namespace Quick_NCA_Finder
 {
@@ -69,7 +70,7 @@ namespace Quick_NCA_Finder
                             ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}0{i}.nca");
                         }
                         else i = 0;
-                        using (Stream source = nca.GetStream())
+                        using (Stream source = nca.GetStorage().AsStream())
                         using (FileStream dest = ncainfo.Create())
                         {
                             source.CopyTo(dest);
@@ -114,7 +115,7 @@ namespace Quick_NCA_Finder
                             ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}0{i}.nca");
                         }
                         else i = 0;
-                        using (Stream source = nca.GetStream())
+                        using (Stream source = nca.GetStorage().AsStream())
                         using (FileStream dest = ncainfo.Create())
                         {
                             source.CopyTo(dest);
