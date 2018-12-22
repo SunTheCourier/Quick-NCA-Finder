@@ -10,6 +10,7 @@ namespace Quick_NCA_Finder
 {
     class Program
     {
+        static readonly ProgressBar progress = new ProgressBar();
         static SwitchFs fs;
         static readonly DirectoryInfo ApplicationsFolder = new DirectoryInfo("./Apps");
 
@@ -49,34 +50,42 @@ namespace Quick_NCA_Finder
                 return;
             }
 
-            if (args[1] == "*" && args[2].ToLower() == "nsp")
-            {
-                foreach (KeyValuePair<ulong, Title> kv in fs.Titles)
-                {
-                    ulong titleId = kv.Key;
-                    Title title = kv.Value;
-                    string titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version}]";
-                    string safeNSPName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
-                    safeNSPName = safeNSPName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
-                    FileInfo SafeNSP = new FileInfo(Path.Combine(ApplicationsFolder.FullName, safeNSPName));
-                    Pfs0Builder NSP = new Pfs0Builder();
+            ApplicationsFolder.Create();
 
-                    foreach (Nca nca in title.Ncas)
+            if (args[1] == "*" && args.Length == 3)
+            {
+                if (args[2].ToLower() == "nsp")
+                {
+                    Pfs0Builder NSP = new Pfs0Builder();
+                    foreach (KeyValuePair<ulong, Title> kv in fs.Titles)
                     {
-                        NSP.AddFile(nca.NcaId, nca.GetStorage().AsStream());
-                        Console.WriteLine($"Saving {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to working PFS0...");
-                    }
-                    using (FileStream dest = SafeNSP.Create())
-                    {
-                        NSP.Build(dest, new ProgressBar());
+                        ulong titleId = kv.Key;
+                        Title title = kv.Value;
+
+                        string titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version.Revision}].nsp";
+                        string safeNSPName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
+                        safeNSPName = safeNSPName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
+                        FileInfo SafeNSP = new FileInfo(Path.Combine(ApplicationsFolder.FullName, safeNSPName));
+
+                        foreach (Nca nca in title.Ncas)
+                        {
+                            NSP.AddFile(nca.NcaId, nca.GetStorage().AsStream());
+                            Console.WriteLine($"Adding {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to PFS0...");
+                        }
+                        Console.WriteLine("Saving PFS0");
+                        using (FileStream dest = SafeNSP.Create())
+                        {
+                            NSP.Build(dest, progress);
+                        }
                     }
                 }
                 Console.WriteLine("Done!");
                 return;
             }
 
-            if (args[1] == "*" && args[2].ToLower() != "nsp")
+            if (args[1] == "*" && args.Length != 3)
             {
+                Console.WriteLine("Saving all NCAs...");
                 foreach (KeyValuePair<ulong, Title> kv in fs.Titles)
                 {
                     ulong titleId = kv.Key;
@@ -86,10 +95,8 @@ namespace Quick_NCA_Finder
                     safeDirectoryName = safeDirectoryName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
                     DirectoryInfo safeDirectory = new DirectoryInfo(Path.Combine(ApplicationsFolder.FullName, safeDirectoryName));
                     safeDirectory.Create();
-
                     foreach (Nca nca in title.Ncas)
                     {
-                        Console.WriteLine($"Saving {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to working directory...");
                         FileInfo ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}00.nca");
                         if (ncainfo.Exists)
                         {
@@ -97,10 +104,10 @@ namespace Quick_NCA_Finder
                             ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}0{i}.nca");
                         }
                         else i = 0;
-                        using (Stream source = nca.GetStorage().AsStream())
                         using (FileStream dest = ncainfo.Create())
+                        using (IStorage storage = nca.GetStorage())
                         {
-                            source.CopyTo(dest);
+                            storage.AsStream().CopyStream(dest, storage.Length, progress);
                         }
                     }
                 }
@@ -115,12 +122,25 @@ namespace Quick_NCA_Finder
             }
             catch
             {
-                if (args[2].ToLower() != "nsp") GetNCAs(true, TitleName: args[1]);
-                else GetNSP(true, TitleName: args[1]);
+                //Better way to do this?
+                if (args.Length == 3)
+                {
+                    if (args[2] == "nsp")
+                    {
+                        GetNSP(true, TitleName: args[1]);
+                    }
+                }
+                else GetNCAs(true, TitleName: args[1]);
                 return;
             }
-            if (args[2].ToLower() != "nsp") GetNCAs(false, TID: TID);
-            else GetNSP(false, TID: TID);
+            if (args.Length == 3)
+            {
+                if (args[2].ToLower() == "nsp")
+                {
+                    GetNSP(false, TID: TID);
+                }
+            }
+            else GetNCAs(false, TID: TID);
         }
 
         private static void GetNCAs(bool SearchByName, ulong TID = 0, string TitleName = null)
@@ -128,6 +148,7 @@ namespace Quick_NCA_Finder
             int i = 0;
             if (SearchByName)
             {
+
                 foreach (KeyValuePair<ulong, Title> kv in fs.Titles)
                 {
                     ulong titleId = kv.Key;
@@ -141,10 +162,10 @@ namespace Quick_NCA_Finder
                         safeDirectoryName = safeDirectoryName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
                         DirectoryInfo safeDirectory = new DirectoryInfo(Path.Combine(ApplicationsFolder.FullName, safeDirectoryName));
                         safeDirectory.Create();
+                        Console.WriteLine($"Saving {title.Name} v{title.Version.Revision} to working directory...");
 
                         foreach (Nca nca in title.Ncas)
                         {
-                            Console.WriteLine($"Saving {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to working directory...");
                             FileInfo ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}00.nca");
                             if (ncainfo.Exists)
                             {
@@ -152,13 +173,15 @@ namespace Quick_NCA_Finder
                                 ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}0{i}.nca");
                             }
                             else i = 0;
-                            using (Stream source = nca.GetStorage().AsStream())
+
                             using (FileStream dest = ncainfo.Create())
+                            using (IStorage storage = nca.GetStorage())
                             {
-                                source.CopyTo(dest);
+                                storage.AsStream().CopyStream(dest, storage.Length, progress);
                             }
                         }
-                        Console.WriteLine("Done!");
+                        //weird progress bar bug(?)
+                        Console.WriteLine("\nDone!");
                         return;
                     }
                     else Console.WriteLine($"{titleId:X8}");
@@ -172,7 +195,6 @@ namespace Quick_NCA_Finder
                     ulong titleId = kv.Key;
                     Title title = kv.Value;
 
-
                     if (titleId == TID)
                     {
                         Console.WriteLine("Found!");
@@ -181,10 +203,10 @@ namespace Quick_NCA_Finder
                         safeDirectoryName = safeDirectoryName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
                         DirectoryInfo safeDirectory = new DirectoryInfo(Path.Combine(ApplicationsFolder.FullName, safeDirectoryName));
                         safeDirectory.Create();
+                        Console.WriteLine($"Saving {title.Name} v{title.Version.Revision} to working directory...");
 
                         foreach (Nca nca in title.Ncas)
                         {
-                            Console.WriteLine($"Saving {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to working directory...");
                             FileInfo ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}00.nca");
                             if (ncainfo.Exists)
                             {
@@ -192,10 +214,11 @@ namespace Quick_NCA_Finder
                                 ncainfo = safeDirectory.GetFile($"{nca.Header.ContentType}0{i}.nca");
                             }
                             else i = 0;
-                            using (Stream source = nca.GetStorage().AsStream())
+
                             using (FileStream dest = ncainfo.Create())
+                            using (IStorage storage = nca.GetStorage())
                             {
-                                source.CopyTo(dest);
+                                storage.AsStream().CopyStream(dest, storage.Length, progress);
                             }
                         }
                         Console.WriteLine("Done!");
@@ -218,7 +241,7 @@ namespace Quick_NCA_Finder
 
                     if (title.Name.ToLower() == TitleName.ToLower() || title.Name.ToLower().Contains(TitleName.ToLower()))
                     {
-                        string titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version}]";
+                        string titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version.Revision}].nsp";
                         string safeNSPName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
                         safeNSPName = safeNSPName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
                         FileInfo SafeNSP = new FileInfo(Path.Combine(ApplicationsFolder.FullName, safeNSPName));
@@ -228,9 +251,12 @@ namespace Quick_NCA_Finder
                             NSP.AddFile(nca.NcaId, nca.GetStorage().AsStream());
                             Console.WriteLine($"Saving {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to PFS0...");
                         }
+                        if (SafeNSP.Exists) SafeNSP.Delete();
+
+                        Console.WriteLine("Saving PFS0");
                         using (FileStream dest = SafeNSP.Create())
                         {
-                            NSP.Build(dest, new ProgressBar());
+                            NSP.Build(dest, progress);
                         }
                         Console.WriteLine("Done!");
                         return;
@@ -248,7 +274,7 @@ namespace Quick_NCA_Finder
 
                     if (titleId == TID)
                     {
-                        string titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version}]";
+                        string titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version.Revision}].nsp";
                         string safeNSPName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
                         safeNSPName = safeNSPName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
                         FileInfo SafeNSP = new FileInfo(Path.Combine(ApplicationsFolder.FullName, safeNSPName));
@@ -257,11 +283,14 @@ namespace Quick_NCA_Finder
                         foreach (Nca nca in title.Ncas)
                         {
                             NSP.AddFile(nca.NcaId, nca.GetStorage().AsStream());
-                            Console.WriteLine($"Saving {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to PFS0...");
+                            Console.WriteLine($"Adding {nca.Header.TitleId:X8} {title.Name}: {nca.Header.ContentType} to PFS0...");
                         }
+                        if (SafeNSP.Exists) SafeNSP.Delete();
+
+                        Console.WriteLine("Saving PFS0");
                         using (FileStream dest = SafeNSP.Create())
                         {
-                            NSP.Build(dest, new ProgressBar());
+                            NSP.Build(dest, progress);
                         }
                         Console.WriteLine("Done!");
                         return;
