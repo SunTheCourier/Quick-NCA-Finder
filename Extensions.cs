@@ -9,16 +9,6 @@ namespace Quick_NCA_Finder
         {
             return new FileInfo($"{obj.FullName}{Path.DirectorySeparatorChar}{filename}");
         }
-
-        public static bool ContainsFile(this DirectoryInfo obj, string filename)
-        {
-            return obj.GetFile(filename).Exists;
-        }
-
-        public static DirectoryInfo GetDirectory(this DirectoryInfo obj, string foldername)
-        {
-            return new DirectoryInfo($"{obj.FullName}{Path.DirectorySeparatorChar}{foldername}");
-        }
     }
 }
 

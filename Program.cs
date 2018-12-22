@@ -18,7 +18,7 @@ namespace Quick_NCA_Finder
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: Quick-NCA-Finder.exe {Folder to search, make this the root of the NAND partition or SD.} {TID or name of application to search for. Use * for all titles, or leave blank to list all titles.} {Add `NSP` (PFS0) to pack into NSP or keep blank for no NSP");
+                Console.WriteLine("Usage: Quick-NCA-Finder.exe {Folder to search, make this the root of the NAND partition or SD.} {TID or name of application to search for. Use * for all titles, or leave blank to list all titles.} {Add `NSP`  to pack into NSP (PFS0) or keep blank for no NSP");
                 return;
             }
 
@@ -122,12 +122,16 @@ namespace Quick_NCA_Finder
             }
             catch
             {
-                //Better way to do this?
                 if (args.Length == 3)
                 {
                     if (args[2] == "nsp")
                     {
                         GetNSP(true, TitleName: args[1]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Unknow argument!");
+                        Console.WriteLine("Done!");
                     }
                 }
                 else GetNCAs(true, TitleName: args[1]);
@@ -139,6 +143,11 @@ namespace Quick_NCA_Finder
                 {
                     GetNSP(false, TID: TID);
                 }
+                else
+                {
+                    Console.WriteLine("Unknow argument!");
+                    Console.WriteLine("Done!");
+                }
             }
             else GetNCAs(false, TID: TID);
         }
@@ -148,7 +157,6 @@ namespace Quick_NCA_Finder
             int i = 0;
             if (SearchByName)
             {
-
                 foreach (KeyValuePair<ulong, Title> kv in fs.Titles)
                 {
                     ulong titleId = kv.Key;
