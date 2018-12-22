@@ -18,7 +18,7 @@ namespace Quick_NCA_Finder
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: Quick-NCA-Finder.exe {Folder to search, make this the root of the NAND partition or SD.} {TID or name of application to search for, use * for all titles, or leave blank to list all titles.} {add `NSP` to pack into NSP or keep blank for no NSP");
+                Console.WriteLine("Usage: Quick-NCA-Finder.exe {Folder to search, make this the root of the NAND partition or SD.} {TID or name of application to search for. Use * for all titles, or leave blank to list all titles.} {Add `NSP` (PFS0) to pack into NSP or keep blank for no NSP");
                 return;
             }
 
