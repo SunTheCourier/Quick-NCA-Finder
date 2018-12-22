@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Quick NCA Finder")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("Copyright © 2018 SunTheCourier")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
