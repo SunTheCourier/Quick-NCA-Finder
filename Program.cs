@@ -10,9 +10,9 @@ namespace Quick_NCA_Finder
 {
     class Program
     {
-        static readonly ProgressBar progress = new ProgressBar();
-        static SwitchFs fs;
-        static readonly DirectoryInfo ApplicationsFolder = new DirectoryInfo("./Apps");
+        private static readonly ProgressBar progress = new ProgressBar();
+        private static SwitchFs fs;
+        private static readonly DirectoryInfo ApplicationsFolder = new DirectoryInfo("./Apps");
 
         public static void Main(string[] args)
         {
@@ -23,15 +23,21 @@ namespace Quick_NCA_Finder
             }
 
             DirectoryInfo dir = new DirectoryInfo(args[0]);
-            FileInfo prodkeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch/prod.keys"));
-            FileInfo titlekeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch/title.keys"));
-            FileInfo consolekeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch/console.keys"));
+            FileInfo prodkeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch", "prod.keys"));
+            FileInfo titlekeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch", "title.keys"));
+            FileInfo consolekeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch", "console.keys"));
             int i = 0;
 
-            if (!prodkeys.Exists || !titlekeys.Exists || !consolekeys.Exists)
+            if (!prodkeys.Exists && !titlekeys.Exists && !consolekeys.Exists)
             {
-                Console.WriteLine("Your prod.keys, title.keys or console.keys do not exist at ~/.switch/ derive them with HACGUI or place them there.");
-                return;
+                prodkeys = new FileInfo("prod.keys");
+                titlekeys = new FileInfo("title.keys");
+                consolekeys = new FileInfo("console.keys");
+                if (!prodkeys.Exists && !titlekeys.Exists && !consolekeys.Exists)
+                {
+                    Console.WriteLine("Your prod.keys, title.keys or console.keys do not exist in ~/.switch/ or the working directory, derive them with HACGUI or place them there.");
+                    return;
+                }
             }
 
             Keyset keys = new Keyset();
