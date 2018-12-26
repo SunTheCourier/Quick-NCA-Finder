@@ -28,12 +28,12 @@ namespace Quick_NCA_Finder
             FileInfo consolekeys = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch", "console.keys"));
             int i = 0;
 
-            if (!prodkeys.Exists && !titlekeys.Exists && !consolekeys.Exists)
+            if (!prodkeys.Exists || !titlekeys.Exists || !consolekeys.Exists)
             {
                 prodkeys = new FileInfo("prod.keys");
                 titlekeys = new FileInfo("title.keys");
                 consolekeys = new FileInfo("console.keys");
-                if (!prodkeys.Exists && !titlekeys.Exists && !consolekeys.Exists)
+                if (!prodkeys.Exists || !titlekeys.Exists || !consolekeys.Exists)
                 {
                     Console.WriteLine("Your prod.keys, title.keys or console.keys do not exist in ~/.switch/ or the working directory, derive them with HACGUI or place them there.");
                     return;
