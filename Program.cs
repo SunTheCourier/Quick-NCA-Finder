@@ -45,7 +45,7 @@ namespace Quick_NCA_Finder
             List<string> dirs = new List<string>();
             foreach (DirectoryInfo info in dir.EnumerateDirectories())
             {
-                dirs.Add(info.FullName);
+                dirs.Add(info.Name);
             }
             if (dirs.Contains("Nintendo")) fs = SwitchFs.OpenSdCard(keys, new LocalFileSystem(dir.FullName));
             else fs = SwitchFs.OpenNandPartition(keys, new LocalFileSystem(dir.FullName));
