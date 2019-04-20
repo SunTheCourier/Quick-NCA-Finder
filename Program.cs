@@ -77,8 +77,8 @@ namespace Quick_NCA_Finder
                         Title title = kv.Value;
                         string titleRoot;
 
-                        if (!string.IsNullOrWhiteSpace(title.Name)) titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version}].nsp";
-                        else titleRoot = $"{titleId:X8} [{title.Version}].nsp";
+                        if (!string.IsNullOrWhiteSpace(title.Name)) titleRoot = $"{titleId:X8} [{title.Name}] [{title.Control.DisplayVersion}].nsp";
+                        else titleRoot = $"{titleId:X8} [{title.Control.DisplayVersion}].nsp";
 
                         string safeNSPName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
                         safeNSPName = safeNSPName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
@@ -115,8 +115,8 @@ namespace Quick_NCA_Finder
                     Title title = kv.Value;
                     string titleRoot;
 
-                    if (!string.IsNullOrWhiteSpace(title.Name)) titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version}]";
-                    else titleRoot = $"{titleId:X8} [{title.Version}]";
+                    if (!string.IsNullOrWhiteSpace(title.Name)) titleRoot = $"{titleId:X8} [{title.Name}] [{title.Control.DisplayVersion}]";
+                    else titleRoot = $"{titleId:X8} [{title.Control.DisplayVersion}]";
 
                     string safeDirectoryName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
                     safeDirectoryName = safeDirectoryName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
@@ -195,12 +195,12 @@ namespace Quick_NCA_Finder
                         if (title.Name.ToLower() == TitleName.ToLower() || title.Name.ToLower().Contains(TitleName.ToLower()))
                         {
                             Console.WriteLine("Found!");
-                            string titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version}]";
+                            string titleRoot = $"{titleId:X8} [{title.Name}] [{title.Control.DisplayVersion}]";
                             string safeDirectoryName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
                             safeDirectoryName = safeDirectoryName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
                             DirectoryInfo safeDirectory = new DirectoryInfo(Path.Combine(ApplicationsFolder.FullName, safeDirectoryName));
                             safeDirectory.Create();
-                            Console.WriteLine($"Saving {title.Name} v{title.Version} to Apps directory...");
+                            Console.WriteLine($"Saving {title.Name} {title.Control.DisplayVersion} to Apps directory...");
 
                             foreach (Nca nca in title.Ncas)
                             {
@@ -239,15 +239,15 @@ namespace Quick_NCA_Finder
                         Console.WriteLine("Found!");
                         string titleRoot;
 
-                        if (!string.IsNullOrWhiteSpace(title.Name)) titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version}]";
-                        else titleRoot = $"{titleId:X8} [{title.Version}]";
+                        if (!string.IsNullOrWhiteSpace(title.Name)) titleRoot = $"{titleId:X8} [{title.Name}] [{title.Control.DisplayVersion}]";
+                        else titleRoot = $"{titleId:X8} [{title.Control.DisplayVersion}]";
 
                         string safeDirectoryName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
                         safeDirectoryName = safeDirectoryName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
                         DirectoryInfo safeDirectory = new DirectoryInfo(Path.Combine(ApplicationsFolder.FullName, safeDirectoryName));
                         safeDirectory.Create();
-                        if (!string.IsNullOrWhiteSpace(title.Name)) Console.WriteLine($"Saving {title.Name} v{title.Version} to Apps directory...");
-                        else Console.WriteLine($"Saving {titleId:X8} v{title.Version} to Apps directory...");
+                        if (!string.IsNullOrWhiteSpace(title.Name)) Console.WriteLine($"Saving {title.Name} {title.Control.DisplayVersion} to Apps directory...");
+                        else Console.WriteLine($"Saving {titleId:X8} {title.Control.DisplayVersion} to Apps directory...");
 
                         foreach (Nca nca in title.Ncas)
                         {
@@ -286,7 +286,7 @@ namespace Quick_NCA_Finder
                     {
                         if (title.Name.ToLower() == TitleName.ToLower() || title.Name.ToLower().Contains(TitleName.ToLower()))
                         {
-                            string titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version}].nsp";
+                            string titleRoot = $"{titleId:X8} [{title.Name}] [{title.Control.DisplayVersion}].nsp";
                             string safeNSPName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
                             safeNSPName = safeNSPName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
                             FileInfo SafeNSP = new FileInfo(Path.Combine(ApplicationsFolder.FullName, safeNSPName));
@@ -321,8 +321,8 @@ namespace Quick_NCA_Finder
                     if (titleId == TID)
                     {
                         string titleRoot;
-                        if (!string.IsNullOrWhiteSpace(title.Name)) titleRoot = $"{titleId:X8} [{title.Name}] [v{title.Version}].nsp";
-                        else titleRoot = $"{titleId:X8} [{title.Version}].nsp";
+                        if (!string.IsNullOrWhiteSpace(title.Name)) titleRoot = $"{titleId:X8} [{title.Name}] [{title.Control.DisplayVersion}].nsp";
+                        else titleRoot = $"{titleId:X8} [{title.Control.DisplayVersion}].nsp";
                         string safeNSPName = new string(titleRoot.Where(c => !Path.GetInvalidPathChars().Contains(c)).ToArray()); //remove unsafe chars
                         safeNSPName = safeNSPName.Replace(":", ""); //manually remove `:` cuz mircosoft doesnt have it in their list
                         FileInfo SafeNSP = new FileInfo(Path.Combine(ApplicationsFolder.FullName, safeNSPName));
