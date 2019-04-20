@@ -42,7 +42,15 @@ namespace Quick_NCA_Finder
 
             Keyset keys = new Keyset();
             keys = ExternalKeys.ReadKeyFile(prodkeys.FullName, titlekeys.FullName, consolekeys.FullName);
-            fs = new SwitchFs(keys, new FileSystem(dir.FullName));
+            List<string> dirs = new List<string>();
+            foreach (DirectoryInfo info in dir.EnumerateDirectories())
+            {
+                dirs.Add(info.FullName);
+            }
+            if (dirs.Contains("Nintendo")) fs = SwitchFs.OpenSdCard(keys, new LocalFileSystem(dir.FullName));
+            else fs = SwitchFs.OpenNandPartition(keys, new LocalFileSystem(dir.FullName));
+
+
 
             if (args.Length == 1)
             {
